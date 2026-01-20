@@ -1,16 +1,14 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { FaGithub, FaExternalLinkAlt, FaPlay } from "react-icons/fa";
-import projectS from "../media/p-s.png";
+import { motion } from "framer-motion";
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 function Portfolio() {
 
 const mainProject = {
     title: "Project S",
     description: "An order tracking platform with real-time status updates, a cash flow management system, and a real-time chat feature that enables seamless communication between customers and managers.",
     tech: ["HTML", "CSS", "JavaScript", "Node.js", "MySQL", "Socket.io"],
-    image: projectS, // Replace with your screenshot
+    video: "https://www.youtube.com/embed/7gD3Z_tc0Rw",
     liveLink: "https://project-s-nhsi.onrender.com/",
-    repoLink: "https://github.com/ronAa21/Project-CashFlow",
-    videoLink: "#" // Optional: Showcase your editing skills here with a demo reel
+    repoLink: "https://github.com/ronAa21/Project-CashFlow"
   };
 
   // 2. THE THREE MINI PROJECTS
@@ -35,6 +33,20 @@ const mainProject = {
       tech: ["HTML/CSS", "JavaScript", "Node.js", "MySQL", "Grid"],
       link: "#",
       repo: "#"
+    },
+    {
+      title: "Megacat About-me site",
+      description: "A commissioned about-me website that work previously on Megacat",
+      tech: ["HTML/CSS", "JavaScript"],
+      link: "https://about-me-website-five.vercel.app/",
+      repo: "https://github.com/ronAa21/About-me-website"
+    },
+    {
+      title: "Gutenverse (Clone)",
+      description: "A static version of the website Gutenverse",
+      tech: ["HTML", "CSS", "Grid"],
+      link: "https://gutenverse-clone-3q4z.vercel.app/",
+      repo: "https://github.com/ronAa21/Gutenverse-Clone-"
     }
   ];
 
@@ -52,31 +64,39 @@ const mainProject = {
           </h1>
         </div>
 
-        {/* SECTION 1: THE FEATURED PROJECT (Hero Style) */}
+{/* SECTION 1: THE FEATURED PROJECT (Hero Style) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          // Added 'group/video' here to specifically target the video hover state if needed, but standard 'group' works too
           className="group relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 hover:border-teal-500/50 transition-all duration-500 mb-20"
         >
-          <div className="flex flex-col lg:flex-row">
+          <div className="flex flex-col lg:flex-row h-full">
             
-            {/* Image Side (Takes up 60% on desktop) */}
-            <div className="lg:w-3/5 relative overflow-hidden">
-              <div className="absolute inset-0 bg-teal-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
-              <img 
-                src={mainProject.image} 
-                alt={mainProject.title} 
-                className="w-full h-full object-cover transform group-hover:scale-105 transition duration-700"
-              />
+            {/* Video Side */}
+            {/* Added 'group' to this container specifically for the video overlay interaction */}
+            <div className="lg:w-3/5 relative overflow-hidden bg-black group h-64 sm:h-96 lg:h-auto">
+              
+              {/* THE FIX: Overlay now fades out on hover (group-hover:opacity-0) */}
+              {/* We remove pointer-events-none so it doesn't confuse the browser, opacity-0 handles it. */}
+              <div className="absolute inset-0 bg-teal-500/20 transition-opacity duration-500 opacity-100 group-hover:opacity-0 z-10 hidden lg:block" />
+              
+              <iframe 
+                  className="w-full h-full object-cover"
+                  src={mainProject.video} 
+                  title="Project Demo Video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
             </div>
 
             {/* Content Side */}
-            <div className="lg:w-2/5 p-10 flex flex-col justify-center space-y-6">
+            <div className="lg:w-2/5 p-8 lg:p-10 flex flex-col justify-center space-y-6 py-12 lg:py-8">
               <h3 className="text-teal-500 font-bold tracking-widest uppercase text-xs">Featured Project</h3>
               <h2 className="text-3xl font-bold text-white group-hover:text-teal-400 transition-colors">{mainProject.title}</h2>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-gray-400 leading-relaxed text-sm">
                 {mainProject.description}
               </p>
               
@@ -91,10 +111,10 @@ const mainProject = {
 
               {/* Action Buttons */}
               <div className="flex gap-4 pt-4">
-                <a href={mainProject.liveLink} className="flex items-center gap-2 bg-teal-500 text-black px-6 py-2 rounded-full font-bold hover:bg-teal-400 transition">
+                <a href={mainProject.liveLink} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-teal-500 text-black px-6 py-2 rounded-full font-bold hover:bg-teal-400 transition text-sm">
                   <FaExternalLinkAlt /> Live Demo
                 </a>
-                <a href={mainProject.repoLink} className="flex items-center gap-2 px-6 py-2 rounded-full border border-zinc-600 hover:border-white transition">
+                <a href={mainProject.repoLink} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-6 py-2 rounded-full border border-zinc-600 hover:border-white transition text-sm">
                   <FaGithub /> Code
                 </a>
               </div>
