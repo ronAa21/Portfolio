@@ -55,7 +55,7 @@ function About() {
             </p>
 
             <p className="text-gray-300 leading-relaxed">
-              these 4 projects displayed were created by me, this does not include the websites I created along with my school group members.
+              these 4 full-stack projects displayed were created by me, this does not include the websites I created along with my school group members.
             </p>
           </motion.div>
 
@@ -70,7 +70,11 @@ function About() {
             </div>
             <div>
               <h4 className="text-4xl font-bold text-teal-500">4</h4>
-              <p className="text-sm text-gray-400 uppercase tracking-wider">Projects Built</p>
+              <p className="text-sm text-gray-400 uppercase tracking-wider">Full-stack Projects Built</p>
+            </div>
+            <div>
+              <h4 className="text-4xl font-bold text-teal-500">2</h4>
+              <p className="text-sm text-gray-400 uppercase tracking-wider">Static Projects Built</p>
             </div>
           </motion.div>
 

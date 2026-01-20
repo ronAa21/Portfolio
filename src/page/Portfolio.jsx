@@ -32,7 +32,7 @@ const mainProject = {
       description: "A gallery site focusing on masonry layouts and also highlights the use of CRUD",
       tech: ["HTML/CSS", "JavaScript", "Node.js", "MySQL", "Grid"],
       link: "#",
-      repo: "#"
+      repo: "https://github.com/ronAa21/mock-library"
     },
     {
       title: "Megacat About-me site",
@@ -64,7 +64,7 @@ const mainProject = {
           </h1>
         </div>
 
-{/* SECTION 1: THE FEATURED PROJECT (Hero Style) */}
+        {/* SECTION 1: THE FEATURED PROJECT (Hero Style) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
