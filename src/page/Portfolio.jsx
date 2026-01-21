@@ -17,7 +17,7 @@ const mainProject = {
       title: "Pet Adoption App",
       description: "A pet adoption app with a format of a dating app.",
       tech: ["React", "Node.js", "Tailwind", "MySQL", "Axios"],
-      link: "#",
+      link: "https://pet-adoption-web-t3i8.onrender.com",
       repo: "https://github.com/ronAa21/Pet-Adoption/tree/main"
     },
     {
