@@ -28,6 +28,13 @@ const mainProject = {
       repo: "https://github.com/ronAa21/Notes-Website"
     },
     {
+      title: "Decision-App",
+      description: "A decision support tool focusing on weighted scoring logic and also highlights the use of a scalable MVC backend architecture.",
+      tech: ["ReactJs", "JavaScript", "Node.js", "MySQL"],
+      link: "#",
+      repo: "https://github.com/ronAa21/Decision-app/tree/main"
+    },
+    {
       title: "Library ",
       description: "A gallery site focusing on masonry layouts and also highlights the use of CRUD",
       tech: ["HTML/CSS", "JavaScript", "Node.js", "MySQL", "Grid"],
@@ -81,7 +88,7 @@ const mainProject = {
               
               {/* THE FIX: Overlay now fades out on hover (group-hover:opacity-0) */}
               {/* We remove pointer-events-none so it doesn't confuse the browser, opacity-0 handles it. */}
-              <div className="absolute inset-0 bg-teal-500/20 transition-opacity duration-500 opacity-100 group-hover:opacity-0 z-10 hidden lg:block" />
+              <div className="absolute inset-0 bg-teal-500/20 transition-opacity duration-500 opacity-100 group-hover:opacity-0 z-10 hidden" />
               
               <iframe 
                   className="w-full h-full object-cover"

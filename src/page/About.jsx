@@ -69,7 +69,7 @@ function About() {
               <p className="text-sm text-gray-400 uppercase tracking-wider">Years Experience</p>
             </div>
             <div>
-              <h4 className="text-4xl font-bold text-teal-500">4</h4>
+              <h4 className="text-4xl font-bold text-teal-500">5</h4>
               <p className="text-sm text-gray-400 uppercase tracking-wider">Full-stack Projects Built</p>
             </div>
             <div>
