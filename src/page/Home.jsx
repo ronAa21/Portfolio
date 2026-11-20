@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { sfx } from "../sound/audio";
+import { duckMusic, sfx } from "../sound/audio";
 import PixelNav from "../components/PixelNav";
 import PixelSky from "../components/PixelSky";
 import threadsShot from "../../visuals/web/threads-pixel.webp";
@@ -301,6 +301,7 @@ export default function PixelHome() {
     return () => {
       document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
+      duckMusic(false);
     };
   }, [video, dismissVideo]);
 
@@ -497,7 +498,16 @@ export default function PixelHome() {
                 CLOSE ✕
               </button>
             </div>
-            <video className="ph-vm-vid" src={video.video} controls autoPlay playsInline />
+            <video
+              className="ph-vm-vid"
+              src={video.video}
+              controls
+              autoPlay
+              playsInline
+              onPlay={() => duckMusic(true)}
+              onPause={() => duckMusic(false)}
+              onEnded={() => duckMusic(false)}
+            />
             <div className="ph-vm-foot">{video.tags}</div>
           </div>
         </div>

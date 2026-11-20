@@ -18,6 +18,7 @@ const audio = {
   ctx: null,
   on: readPreference(),
   started: false,
+  ducked: false,
   track: "home",
   master: null,
   music: null,
@@ -26,6 +27,13 @@ const audio = {
   next: 0,
   timer: null,
 };
+
+// Music level, and the level it drops to while a video with sound is playing
+const MUSIC_VOL = 0.7;
+const DUCK_VOL = 0.13;
+
+// notified whenever playback starts or stops, so the UI can show the real state
+const subscribers = new Set();
 
 const midiToFreq = (n) => 440 * Math.pow(2, (n - 69) / 12);
 
@@ -207,6 +215,13 @@ export const sfx = {
     if (!audio.started) return;
     tone(540 + (step % 8) * 55, audio.ctx.currentTime, 0.045, "square", 0.06, audio.fx);
   },
+  // short mechanical click layered under every press
+  tap() {
+    if (!audio.started) return;
+    const at = audio.ctx.currentTime;
+    tone(1180, at, 0.018, "square", 0.055, audio.fx);
+    tone(720, at + 0.02, 0.03, "square", 0.04, audio.fx);
+  },
 };
 
 function createContext() {
@@ -228,11 +243,16 @@ function createContext() {
 function beginMusic() {
   if (audio.started || !audio.ctx) return;
   audio.started = true;
-  audio.music.gain.setTargetAtTime(0.7, audio.ctx.currentTime, 0.3);
+  audio.music.gain.setTargetAtTime(
+    audio.ducked ? DUCK_VOL : MUSIC_VOL,
+    audio.ctx.currentTime,
+    0.3
+  );
   audio.step = 0;
   audio.next = audio.ctx.currentTime + 0.1;
   clearInterval(audio.timer);
   audio.timer = setInterval(schedule, 40);
+  subscribers.forEach((fn) => fn(true));
   sfx.select();
 }
 
@@ -243,7 +263,7 @@ function startAudio() {
       if (audio.on && audio.ctx.state === "running") beginMusic();
     })
     .catch(() => {
-      /* waiting for a user gesture */
+      /* still waiting for a gesture */
     });
   return true;
 }
@@ -254,6 +274,26 @@ function stopAudio() {
   clearInterval(audio.timer);
   audio.timer = null;
   audio.music.gain.setTargetAtTime(0, audio.ctx.currentTime, 0.1);
+  subscribers.forEach((fn) => fn(false));
+}
+
+/* ---------- public helpers ---------- */
+
+// Drop the loop under a video that has its own audio, then bring it back.
+export function duckMusic(ducked) {
+  audio.ducked = ducked;
+  if (!audio.ctx || !audio.music || !audio.started) return;
+  audio.music.gain.setTargetAtTime(
+    ducked ? DUCK_VOL : MUSIC_VOL,
+    audio.ctx.currentTime,
+    0.12
+  );
+}
+
+// Lets the toggle show "tap for sound" until the browser actually lets us play.
+export function onStarted(fn) {
+  subscribers.add(fn);
+  return () => subscribers.delete(fn);
 }
 
 function applySound(enabled) {
@@ -268,25 +308,38 @@ function applySound(enabled) {
   return true;
 }
 
+// Browsers keep audio locked until a real gesture. Listen for every kind, and
+// keep listening: one blocked or swallowed tap must not be our only attempt.
+const UNLOCK_EVENTS = ["pointerdown", "touchend", "click", "keydown"];
+
 export function useSound() {
   const [on, setOn] = useState(() => audio.on);
+  const [started, setStarted] = useState(audio.started);
 
   const toggle = useCallback(() => {
     const next = !audio.on;
     applySound(next);
     setOn(next);
+    setStarted(audio.started);
   }, []);
+
+  // retry playback from an explicit click on the toggle
+  const unlockNow = useCallback(() => {
+    startAudio();
+  }, []);
+
+  useEffect(() => onStarted(setStarted), []);
 
   useEffect(() => {
     // Try to start immediately; most browsers will wait for a gesture.
     if (audio.on && !audio.started) startAudio();
 
-    const firstGesture = (event) => {
-      if (event.target?.closest?.("[data-snd]")) return;
-      if (audio.on && !audio.started) startAudio();
+    const unlock = (event) => {
+      if (event?.target?.closest?.("[data-snd]")) return;
+      if (!audio.on || audio.started) return;
+      startAudio();
     };
-    window.addEventListener("pointerdown", firstGesture, { once: true });
-    window.addEventListener("keydown", firstGesture, { once: true });
+    UNLOCK_EVENTS.forEach((name) => window.addEventListener(name, unlock, { passive: true }));
 
     const onVisibility = () => {
       if (!audio.ctx) return;
@@ -296,11 +349,10 @@ export function useSound() {
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      window.removeEventListener("pointerdown", firstGesture);
-      window.removeEventListener("keydown", firstGesture);
+      UNLOCK_EVENTS.forEach((name) => window.removeEventListener(name, unlock));
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
-  return { on, toggle };
+  return { on, started, toggle, unlockNow };
 }

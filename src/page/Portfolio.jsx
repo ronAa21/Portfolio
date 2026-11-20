@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { sfx } from "../sound/audio";
+import { duckMusic, sfx } from "../sound/audio";
 import PixelNav from "../components/PixelNav";
 import petShot from "../../visuals/web/pet-ad-pixel.webp";
 import notesShot from "../../visuals/web/notes-pixel.webp";
@@ -198,6 +198,13 @@ export default function Portfolio() {
   const current = CATEGORIES.find((item) => item.key === cat) || CATEGORIES[0];
   const project = current.items[active];
 
+  // switching stage or leaving the tab tears the player down without a pause
+  // event, so release the music here too
+  useEffect(() => {
+    if (!playing) duckMusic(false);
+  }, [playing]);
+  useEffect(() => () => duckMusic(false), []);
+
   const choose = (index) => {
     if (index === activeRef.current) return;
     activeRef.current = index;
@@ -356,7 +363,16 @@ export default function Portfolio() {
               ) : project.video ? (
                 playing ? (
                   <div className="ps-frame">
-                    <video className="ps-video" src={project.video} controls autoPlay playsInline />
+                    <video
+                      className="ps-video"
+                      src={project.video}
+                      controls
+                      autoPlay
+                      playsInline
+                      onPlay={() => duckMusic(true)}
+                      onPause={() => duckMusic(false)}
+                      onEnded={() => duckMusic(false)}
+                    />
                   </div>
                 ) : (
                   <button

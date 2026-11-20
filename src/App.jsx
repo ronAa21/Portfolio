@@ -1,5 +1,6 @@
 import SoundToggle from "./components/SoundToggle";
 import LoadingScreen from "./components/LoadingScreen";
+import ClickFX from "./components/ClickFX";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import About from "./page/About";
 import Home from "./page/Home";
@@ -21,6 +22,7 @@ function Shell() {
 
       <SoundToggle />
       <LoadingScreen />
+      <ClickFX />
     </div>
   );
 }

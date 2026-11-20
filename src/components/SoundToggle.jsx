@@ -12,7 +12,7 @@ const TRACK_BY_PATH = {
 };
 
 export default function SoundToggle() {
-  const { on, toggle } = useSound();
+  const { on, started, toggle, unlockNow } = useSound();
   const { pathname } = useLocation();
 
   // Every tab gets its own loop; the scheduler swaps chords without a hard stop
@@ -20,16 +20,21 @@ export default function SoundToggle() {
     setTrack(TRACK_BY_PATH[pathname] || "home");
   }, [pathname]);
 
+  // While the browser is still holding audio back, the first tap should unlock
+  // playback rather than switch the music off.
+  const waiting = on && !started;
+  const label = !on ? "SOUND: OFF" : started ? "SOUND: ON" : "TAP FOR SOUND";
+
   return (
     <button
       type="button"
       data-snd
-      className={`sound-toggle${on ? " on" : ""}`}
-      onClick={toggle}
+      className={`sound-toggle${on ? " on" : ""}${waiting ? " waiting" : ""}`}
+      onClick={waiting ? unlockNow : toggle}
       aria-pressed={on}
-      aria-label={on ? "Turn music off" : "Turn music on"}
+      aria-label={waiting ? "Start music playback" : on ? "Turn music off" : "Turn music on"}
     >
-      ♪ SOUND: {on ? "ON" : "OFF"}
+      ♪ {label}
     </button>
   );
 }

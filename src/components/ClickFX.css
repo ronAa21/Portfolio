@@ -1,0 +1,111 @@
+/* Click feedback: eight pixel shards flying out from the pointer */
+.cfx {
+  position: fixed;
+  z-index: 95;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.cfx i {
+  position: absolute;
+  top: -2.5px;
+  left: -2.5px;
+  width: 5px;
+  height: 5px;
+  background: #fde68a;
+  box-shadow: 0 0 0 1px #00120f;
+  animation: cfx-shard 380ms steps(4, end) forwards;
+}
+.cfx i:nth-child(2n) {
+  background: #5eead4;
+}
+
+/* 8 directions, 45° apart */
+.cfx i:nth-child(1) {
+  --dx: 0px;
+  --dy: -26px;
+}
+.cfx i:nth-child(2) {
+  --dx: 18px;
+  --dy: -18px;
+}
+.cfx i:nth-child(3) {
+  --dx: 26px;
+  --dy: 0px;
+}
+.cfx i:nth-child(4) {
+  --dx: 18px;
+  --dy: 18px;
+}
+.cfx i:nth-child(5) {
+  --dx: 0px;
+  --dy: 26px;
+}
+.cfx i:nth-child(6) {
+  --dx: -18px;
+  --dy: 18px;
+}
+.cfx i:nth-child(7) {
+  --dx: -26px;
+  --dy: 0px;
+}
+.cfx i:nth-child(8) {
+  --dx: -18px;
+  --dy: -18px;
+}
+
+@keyframes cfx-shard {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* the press point itself flashes for a frame */
+.cfx::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 12px;
+  height: 12px;
+  background: #fdf6c8;
+  animation: cfx-flash 200ms steps(2, end) forwards;
+}
+@keyframes cfx-flash {
+  from {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+/* a square shockwave, so the press reads even over a busy background */
+.cfx::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #5eead4;
+  box-shadow: 0 0 0 1px #00120f;
+  animation: cfx-ring 320ms steps(3, end) forwards;
+}
+@keyframes cfx-ring {
+  from {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}

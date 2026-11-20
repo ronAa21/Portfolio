@@ -24,6 +24,21 @@
 .sound-toggle:active {
   transform: translateY(4px);
 }
+/* audio is still locked by the browser — invite the tap that unlocks it */
+.sound-toggle.waiting {
+  animation: sound-wait 1.1s steps(1, end) infinite;
+}
+@keyframes sound-wait {
+  50% {
+    background: #5eead4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sound-toggle.waiting {
+    animation: none;
+    background: #fde68a;
+  }
+}
 .sound-toggle:focus-visible {
   outline: 3px solid #fde68a;
   outline-offset: 4px;
