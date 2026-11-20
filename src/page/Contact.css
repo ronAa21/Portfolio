@@ -1,0 +1,366 @@
+/* =====================================================================
+   MAILBOX — contact page. Scoped to .ct* so nothing leaks.
+   ===================================================================== */
+.ct-wrap {
+  position: relative;
+  z-index: 3;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 10px 5vw 140px;
+}
+
+/* ---------- header ---------- */
+.ct-head {
+  margin-bottom: 38px;
+}
+.ct-title {
+  margin: 16px 0 16px;
+  font-size: clamp(22px, 3.6vw, 44px);
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-shadow: 5px 5px 0 #000;
+}
+.ct-title span {
+  color: var(--t);
+  text-shadow: 5px 5px 0 #063b36;
+}
+.ct-sub {
+  max-width: 620px;
+  font-size: 10px;
+  line-height: 2.2;
+  color: #bcd;
+}
+
+/* ---------- two columns ---------- */
+.ct-body {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 26px;
+  align-items: start;
+}
+.ct-side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---------- info cards ---------- */
+.ct-card {
+  padding: 18px;
+  border: 2px solid #123c39;
+  background: #04181a;
+  box-shadow: 6px 6px 0 #0008;
+}
+.ct-card-h {
+  margin-bottom: 15px;
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: #2f6b66;
+}
+
+.ct-mail {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #0e3b37;
+  background: #02100f;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.1s steps(2), background 0.1s steps(2);
+}
+.ct-mail:hover,
+.ct-mail:focus-visible {
+  border-color: var(--t2);
+  background: #062022;
+}
+.ct-mail-ico {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+  color: #001a17;
+  background: var(--t2);
+  box-shadow: 3px 3px 0 #000;
+}
+.ct-mail-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+}
+.ct-mail-txt b {
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #fff;
+  word-break: break-all;
+}
+.ct-mail-txt i {
+  font-size: 7px;
+  font-style: normal;
+  letter-spacing: 1px;
+  color: var(--y);
+}
+
+.ct-soc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 2px solid #0e3b37;
+  background: #02100f;
+  font-size: 8px;
+  color: #cde;
+  text-decoration: none;
+  transition: border-color 0.1s steps(2), transform 0.1s steps(2);
+}
+.ct-soc + .ct-soc {
+  margin-top: 10px;
+}
+.ct-soc:hover,
+.ct-soc:focus-visible {
+  border-color: var(--t2);
+  transform: translateX(4px);
+}
+.ct-soc em {
+  font-size: 7px;
+  font-style: normal;
+  color: #6aa9a3;
+  text-align: right;
+}
+.ct-soc b {
+  font-weight: 400;
+  color: var(--y);
+}
+
+.ct-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 2px solid #123c39;
+  background: #04181a;
+  box-shadow: 6px 6px 0 #0008;
+  font-size: 7px;
+  line-height: 1.9;
+  letter-spacing: 1px;
+  color: #7fc4bb;
+}
+.ct-status i {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  background: #4ade80;
+  box-shadow: 0 0 0 2px #00120f;
+  animation: ct-blink 1.6s steps(1, end) infinite;
+}
+@keyframes ct-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ---------- form panel ---------- */
+.ct-panel {
+  border: 2px solid #123c39;
+  background: linear-gradient(#06191c, #041416);
+  box-shadow: 8px 8px 0 #0009;
+}
+.ct-panel-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 18px;
+  border-bottom: 2px solid #0e3330;
+  background: #04181a;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--y);
+}
+.ct-panel-tag {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #2f6b66;
+}
+
+.ct-panel-body {
+  position: relative;
+}
+.ct-form-off {
+  visibility: hidden;
+}
+
+.ct-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+}
+.ct-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.ct-field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.ct-field label {
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  color: #7fc4bb;
+}
+.ct-field label::before {
+  content: "▸ ";
+  color: var(--t);
+}
+.ct-field input,
+.ct-field textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 2px solid #123c39;
+  background: #02100f;
+  color: #fff;
+  font-family: inherit;
+  font-size: 9px;
+  line-height: 1.8;
+  outline: none;
+  transition: border-color 0.1s steps(2), box-shadow 0.1s steps(2);
+}
+.ct-field textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+.ct-field input::placeholder,
+.ct-field textarea::placeholder {
+  color: #2f6b66;
+}
+.ct-field input:focus,
+.ct-field textarea:focus {
+  border-color: var(--t2);
+  box-shadow: 0 0 0 2px #0b3a35;
+}
+.ct-send {
+  width: 100%;
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+/* ---------- sending / success / error screens ---------- */
+.ct-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(#06191c, #041416);
+}
+.ct-screen h3 {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #fff;
+}
+.ct-screen p {
+  max-width: 340px;
+  font-size: 8px;
+  line-height: 2.2;
+  color: #8fb7b2;
+}
+.ct-big {
+  font-size: 40px;
+  line-height: 1;
+}
+.ct-big.ok {
+  color: var(--t2);
+  text-shadow: 4px 4px 0 #063b36;
+}
+.ct-big.bad {
+  color: #f87171;
+  text-shadow: 4px 4px 0 #3b1010;
+}
+
+.ct-load {
+  display: flex;
+  gap: 6px;
+}
+.ct-load i {
+  width: 13px;
+  height: 13px;
+  background: #123c39;
+  animation: ct-load 1.05s steps(1, end) infinite;
+}
+@keyframes ct-load {
+  50% {
+    background: var(--t2);
+  }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 980px) {
+  .ct-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .ct-head {
+    position: relative;
+    z-index: 0;
+  }
+  /* the moon lands behind the header on narrow screens — scrim it out */
+  .ct-head::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -12px -6vw -20px;
+    background: linear-gradient(180deg, #02080cf5 0%, #02080ce0 58%, #02080c00 100%);
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .ct-wrap {
+    padding: 6px 6vw 130px;
+  }
+  .ct-title {
+    letter-spacing: 1px;
+  }
+  .ct-sub {
+    font-size: 9px;
+  }
+  .ct-row {
+    grid-template-columns: 1fr;
+  }
+  .ct-card {
+    padding: 14px;
+  }
+  .ct-form {
+    padding: 16px;
+  }
+  .ct-mail-txt b {
+    font-size: 8px;
+  }
+  .ct-screen {
+    padding: 40px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-status i,
+  .ct-load i {
+    animation: none;
+  }
+}

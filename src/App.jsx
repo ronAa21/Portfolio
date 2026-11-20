@@ -1,37 +1,36 @@
-import Navigation from "./components/Navigation";
+import SoundToggle from "./components/SoundToggle";
+import LoadingScreen from "./components/LoadingScreen";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import About from "./page/About";
 import Home from "./page/Home";
 import Portfolio from "./page/Portfolio";
+import Achievements from "./page/Achievements";
 import Contact from "./page/Contact";
 
-function App() {
-
+// Every page renders its own pixel-game nav (PixelNav).
+function Shell() {
   return (
-    <BrowserRouter>
-      <div className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] h-screen overflow-y-scroll">
-        <Navigation />
+    <div className="min-h-screen">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/achievements" element={<Achievements />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
 
-        <Routes>
-          <Route path="/" element={
-            <Home />
-          } />
-
-          <Route path="/about" element={
-            <About />
-          } />
-
-          <Route path="/portfolio" element={
-            <Portfolio />
-          } />    
-
-          <Route path="/contact" element={
-            <Contact />
-          } />          
-        </Routes>
-      </div>
-    </BrowserRouter>
-  )
+      <SoundToggle />
+      <LoadingScreen />
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <BrowserRouter>
+      <Shell />
+    </BrowserRouter>
+  );
+}
+
+export default App;

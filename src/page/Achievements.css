@@ -1,0 +1,418 @@
+/* =====================================================================
+   TROPHY ROOM — certificate gallery. Scoped to .ach* so nothing leaks.
+   ===================================================================== */
+.ach-wrap {
+  position: relative;
+  z-index: 3;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 10px 5vw 140px;
+}
+
+/* ---------- header ---------- */
+.ach-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+}
+.ach-title {
+  margin: 16px 0 14px;
+  font-size: clamp(22px, 3.6vw, 44px);
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-shadow: 5px 5px 0 #000;
+}
+.ach-title span {
+  color: var(--t);
+  text-shadow: 5px 5px 0 #063b36;
+}
+.ach-sub {
+  max-width: 560px;
+  font-size: 10px;
+  line-height: 2.2;
+  color: #bcd;
+}
+.ach-tally {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 2px solid #0e3b37;
+  background: #04181a;
+  box-shadow: 6px 6px 0 #0008;
+}
+.ach-tally canvas {
+  width: 34px;
+  height: 34px;
+  image-rendering: pixelated;
+  animation: ph-fl 2.4s steps(4) infinite;
+}
+.ach-tally b {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--y);
+  text-shadow: 3px 3px 0 #000;
+}
+.ach-tally span {
+  font-size: 6px;
+  line-height: 2.1;
+  letter-spacing: 1px;
+  color: #7fc4bb;
+}
+
+/* ---------- card grid ---------- */
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px;
+  margin-top: 38px;
+}
+.ach-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  border: 2px solid #123c39;
+  background: linear-gradient(#06191c, #041416);
+  box-shadow: 8px 8px 0 #0009;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s steps(2), border-color 0.12s steps(2),
+    box-shadow 0.12s steps(2);
+}
+.ach-card:hover,
+.ach-card:focus-visible {
+  border-color: var(--c);
+  transform: translateY(-5px);
+  box-shadow: 8px 13px 0 #0009;
+}
+.ach-card:active {
+  transform: translateY(-1px);
+}
+
+/* slot number + year ribbon */
+.ach-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.ach-no {
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: #2f6b66;
+}
+.ach-year {
+  padding: 5px 8px;
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #001a17;
+  background: var(--c);
+  box-shadow: 2px 2px 0 #000;
+}
+
+/* matted frame: the letterbox gap becomes the mat, not dead space */
+.ach-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  padding: 12px;
+  border: 2px solid #0b2a28;
+  background-color: #062022;
+  background-image: repeating-linear-gradient(0deg, #0a2c29 0 1px, #0000 1px 9px),
+    repeating-linear-gradient(90deg, #0a2c29 0 1px, #0000 1px 9px);
+  overflow: hidden;
+}
+/* mount liner: makes the letterbox band read as matting, not empty space */
+.ach-frame::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid #0f3a36;
+  pointer-events: none;
+}
+.ach-shot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 1px solid #0e3330;
+  background: #02100f;
+  box-shadow: 5px 5px 0 #0007;
+  transition: filter 0.15s steps(2);
+}
+.ach-card:hover .ach-shot {
+  filter: brightness(1.12) saturate(1.06);
+}
+.ach-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, #0000 42%, #ffffff1f 50%, #0000 58%);
+  transform: translateX(-130%);
+}
+.ach-card:hover .ach-sweep {
+  animation: ach-sweep 0.75s linear;
+}
+@keyframes ach-sweep {
+  to {
+    transform: translateX(130%);
+  }
+}
+
+/* text block */
+.ach-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.ach-name {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+.ach-issuer {
+  font-size: 7px;
+  line-height: 1.9;
+  color: #7fc4bb;
+}
+.ach-issuer i {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 6px;
+  font-style: normal;
+  letter-spacing: 1.5px;
+  color: #2f6b66;
+}
+
+/* always-visible action row (hover-only labels are invisible on touch) */
+.ach-cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 13px;
+  border-top: 2px solid #0e3330;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--y);
+  transition: color 0.12s steps(2);
+}
+.ach-card:hover .ach-cta,
+.ach-card:focus-visible .ach-cta {
+  color: var(--c);
+}
+
+/* ---------- certificate viewer ---------- */
+.ach-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(1180px, 96vw);
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+}
+.ach-viewer {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  overflow-y: auto;
+}
+.ach-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  border: 2px solid #0b2a28;
+  background: radial-gradient(circle at 50% 45%, #07242a 0%, #02100f 72%);
+}
+.ach-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, #0000 0 3px, #00000059 3px 4px);
+}
+.ach-full {
+  position: relative;
+  z-index: 1;
+  display: block;
+  max-width: 100%;
+  max-height: 66vh;
+  background: #06171a;
+  box-shadow: 0 0 0 1px #16413c, 0 0 0 5px #02100f, 12px 12px 0 #0007;
+}
+.ach-info {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border-left: 2px solid #0b2a28;
+  background: #051518;
+}
+.ach-info-no {
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: #2f6b66;
+}
+.ach-info-name {
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--c);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: #fff;
+}
+.ach-rows {
+  display: grid;
+  gap: 14px;
+}
+.ach-rows dt {
+  margin-bottom: 5px;
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  color: #2f6b66;
+}
+.ach-rows dd {
+  font-size: 8px;
+  line-height: 1.9;
+  color: #cde;
+}
+.ach-rows .ach-ok {
+  color: var(--t2);
+}
+.ach-note {
+  margin-top: 2px;
+  font-size: 8px;
+  line-height: 2.1;
+  color: #8fb7b2;
+}
+.ach-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 2px solid #0b2a28;
+}
+.ach-nav button {
+  padding: 9px 9px;
+  border: 0;
+  font-size: 7px;
+  color: var(--t2);
+  background: #0b3a35;
+  box-shadow: 3px 3px 0 #000;
+  cursor: pointer;
+  transition: background 0.1s steps(2), color 0.1s steps(2);
+}
+.ach-nav button:hover {
+  color: #001a17;
+  background: var(--t2);
+}
+.ach-nav span {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #2f6b66;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1000px) {
+  .ach-viewer {
+    flex-direction: column;
+  }
+  .ach-info {
+    flex: 0 0 auto;
+    border-top: 2px solid #0b2a28;
+    border-left: 0;
+  }
+  .ach-note {
+    margin-top: 2px;
+  }
+  .ach-full {
+    max-height: 52vh;
+  }
+}
+
+@media (max-width: 860px) {
+  .ach-head {
+    position: relative;
+    z-index: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+  /* the moon lands behind the header on narrow screens — scrim it out */
+  .ach-head::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -12px -6vw -20px;
+    background: linear-gradient(180deg, #02080cf5 0%, #02080ce0 58%, #02080c00 100%);
+    pointer-events: none;
+  }
+  .ach-tally {
+    padding: 12px 16px;
+  }
+  .ach-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 560px) {
+  .ach-wrap {
+    padding: 6px 6vw 130px;
+  }
+  .ach-sub {
+    font-size: 9px;
+  }
+  .ach-title {
+    letter-spacing: 1px;
+  }
+  .ach-card {
+    padding: 11px;
+  }
+  .ach-frame {
+    padding: 8px;
+  }
+  .ach-name {
+    font-size: 9px;
+  }
+  .ach-cta {
+    font-size: 7px;
+  }
+  .ach-stage {
+    padding: 10px;
+  }
+  .ach-full {
+    max-height: 42vh;
+  }
+  .ach-info {
+    padding: 16px;
+  }
+  .ach-info-name {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ach-card:hover .ach-sweep {
+    animation: none;
+  }
+  .ach-tally canvas {
+    animation: none;
+  }
+}

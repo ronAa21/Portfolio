@@ -1,0 +1,9 @@
+.ph-sky {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 0;
+}

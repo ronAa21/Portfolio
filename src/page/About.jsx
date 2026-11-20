@@ -1,136 +1,325 @@
-import { motion } from "framer-motion";
-function About() {
+import { useEffect, useRef, useState } from "react";
+import PixelNav from "../components/PixelNav";
+import PixelSky from "../components/PixelSky";
+import { sfx } from "../sound/audio";
+import typographyVid from "../media/web/typography.mp4";
+import transitionVid from "../media/web/transitional-vid.mp4";
+import feverVid from "../media/web/fever-dream.mp4";
+import ugcVid from "../media/web/UGC-Sample.mp4";
+import lyricVid from "../media/web/lyric-vid.mp4";
+import facelessVid from "../media/web/faceless-channel-vid.mp4";
+import oldVid from "../media/web/old-vid.mp4";
+import "./PixelHome.css";
+import "./About.css";
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
+// order the reel plays in
+const REEL = [typographyVid, transitionVid, feverVid, ugcVid, lyricVid, facelessVid, oldVid];
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 }
-  };
+const CLIP_MS = 5200; // how long each clip holds before the cut
+const CUT_MS = 260; // point inside the static where the source swaps
+const STATIC_MS = 520; // total length of the static wipe
+const pad = (n) => String(n).padStart(2, "0");
 
-  return(
-    <div className="bg-black text-white min-h-screen py-20 px-10 flex justify-center">
-      <div className="max-w-6xl w-full">
-        
-        {/* Header Section */}
-        <div className="mb-16">
-          <h2 className="text-sm font-bold tracking-[0.2em] uppercase text-gray-400 mb-2">
-            About Me
-          </h2>
-          <h1 className="text-4xl lg:text-5xl font-bold">
-            More than just <span className="text-teal-500">code.</span>
-          </h1>
-        </div>
+const STEPS = [
+  { label: "GRADE 10", note: "Began the journey", color: "#fde68a" },
+  { label: "GRADE 12", note: "Discovered the passion", color: "#5eead4" },
+  { label: "PAST YEAR", note: "Real-world projects", color: "#fda4af" },
+];
 
-        {/* Main Grid Layout */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
-        >
+const STATS = [
+  { value: 2, label: "YEARS EXPERIENCE" },
+  { value: 5, label: "FULL-STACK PROJECTS BUILT" },
+  { value: 2, label: "STATIC PROJECTS BUILT" },
+];
 
-          {/* 1. The Biography Card (Spans 2 columns) */}
-          <motion.div 
-            variants={itemVariants} 
-            className="lg:col-span-2 bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800 hover:border-teal-500/50 transition duration-300"
-          >
-            <h3 className="text-2xl font-bold mb-4 text-teal-400">My Journey</h3>
-            <p className="text-gray-300 leading-relaxed mb-4">
-              I began my software development journey in Grade 10, but it was in Grade 12 that I truly discovered my passion for building software.
+// [abbr, name, color]
+const TECH = [
+  ["RE", "React", "#5eead4"],
+  ["NJ", "Node.js", "#5eead4"],
+  ["EX", "Express", "#ffffff"],
+  ["SQ", "MySQL", "#fde68a"],
+  ["HT", "HTML", "#e8793a"],
+  ["JS", "JavaScript", "#fde68a"],
+  ["CS", "CSS", "#93c5fd"],
+  ["RN", "Render", "#c4b5fd"],
+];
 
-              Although I have two years of formal experience, I’ve been exposed to coding much earlier and started developing websites during my first year in school. Over the past year, I’ve focused on deepening my skills and building real-world projects.
-            </p>
-            <p className="text-gray-300 leading-relaxed mb-4">
-              I enjoy building ideas as soon as they come to mind and turning them into real, working projects. While my tech stack may not be extensive, it’s one I’m confident using and continually improving.
-            </p>
-
-            <p className="text-gray-300 leading-relaxed">
-              these 4 full-stack projects displayed were created by me, this does not include the websites I created along with my school group members.
-            </p>
-          </motion.div>
-
-          {/* 2. The Stats/Quick Info Card */}
-          <motion.div 
-            variants={itemVariants}
-            className="bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800 flex flex-col justify-center gap-6"
-          >
-            <div>
-              <h4 className="text-4xl font-bold text-teal-500">2</h4>
-              <p className="text-sm text-gray-400 uppercase tracking-wider">Years Experience</p>
-            </div>
-            <div>
-              <h4 className="text-4xl font-bold text-teal-500">5</h4>
-              <p className="text-sm text-gray-400 uppercase tracking-wider">Full-stack Projects Built</p>
-            </div>
-            <div>
-              <h4 className="text-4xl font-bold text-teal-500">2</h4>
-              <p className="text-sm text-gray-400 uppercase tracking-wider">Static Projects Built</p>
-            </div>
-          </motion.div>
-
-          {/* 3. Tech Stack (The "Full Stack" Part) */}
-          <motion.div 
-            variants={itemVariants}
-            className="bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800"
-          >
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
-              The Tech
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {['React', 'Node.js', 'Express', 'MySQL', 'HTML', 'JavaScript', 'CSS', "Render"].map((tech) => (
-                <span key={tech} className="px-3 py-1 bg-zinc-800 rounded-full text-sm text-gray-300 hover:bg-teal-500 hover:text-black transition cursor-default">
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* 4. The "Creative" Card (Your Editing/CSS skills) */}
-          <motion.div 
-            variants={itemVariants}
-            className="lg:col-span-2 bg-gradient-to-br from-zinc-900 to-teal-900/20 p-8 rounded-2xl border border-zinc-800 hover:border-teal-500 transition duration-300"
-          >
-            <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold mb-4 text-white">The Creative Side</h3>
-                <p className="text-gray-300 mb-6">
-                  Aside from coding, I also have a hobby of editing, as I work part time on Suno for their promotion videos where I make short reel videos using their music.
-                </p>
-                <div className="flex gap-4">
-                  {/* Examples of Creative Skills */}
-                  <div className="flex items-center gap-2 text-sm text-teal-400">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    Video Editing
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-teal-400">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
-                    Animating
-                  </div>
-                </div>
-              </div>
-              
-              {/* Optional: Place a small GIF or Image related to editing here */}
-              <div className="w-full md:w-48 h-32 bg-zinc-800 rounded-lg flex items-center justify-center border border-dashed border-zinc-600">
-                 <span className="text-xs text-gray-500">Showreel / Edit</span>
-              </div>
-            </div>
-          </motion.div>
-
-        </motion.div>
-      </div>
-    </div>
-  )
+function useReduced() {
+  const [reduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  return reduced;
 }
 
-export default About
+function Timeline() {
+  const reduced = useReduced();
+  const [lit, setLit] = useState(reduced ? STEPS.length - 1 : -1);
+
+  useEffect(() => {
+    if (reduced) return undefined;
+    const timers = STEPS.map((_, i) => setTimeout(() => setLit(i), 350 + i * 420));
+    return () => timers.forEach(clearTimeout);
+  }, [reduced]);
+
+  return (
+    <ol className="ab-tl">
+      {STEPS.map((step, i) => (
+        <li key={step.label} className={i <= lit ? "on" : ""} style={{ "--c": step.color }}>
+          <span className="ab-node" aria-hidden="true" />
+          <b>{step.label}</b>
+          <small>{step.note}</small>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function Stat({ value, label, delay }) {
+  const reduced = useReduced();
+  const filled = Math.min(12, value * 2);
+  const [seg, setSeg] = useState(reduced ? filled : 0);
+  const [count, setCount] = useState(reduced ? value : 0);
+
+  useEffect(() => {
+    if (reduced) return undefined;
+    const timers = [];
+    const segDur = 62;
+
+    // segments fill one at a time, each with a blip
+    for (let i = 0; i < filled; i++) {
+      timers.push(
+        setTimeout(() => {
+          setSeg(i + 1);
+          sfx.tick(i);
+        }, delay + i * segDur)
+      );
+    }
+
+    // the number counts up over the same window
+    for (let i = 1; i <= value; i++) {
+      timers.push(setTimeout(() => setCount(i), delay + (i / value) * filled * segDur));
+    }
+
+    return () => timers.forEach(clearTimeout);
+  }, [value, delay, reduced, filled]);
+
+  return (
+    <div className="ab-stat">
+      <b>{count}</b>
+      <span>{label}</span>
+      <i className="ab-bar" aria-hidden="true">
+        {Array.from({ length: 12 }, (_, i) => (
+          <em key={i} className={i < seg ? "f" : ""} />
+        ))}
+      </i>
+    </div>
+  );
+}
+
+/* TV static: low-res noise stretched up so every grain is a chunky pixel */
+function StaticNoise({ active }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!active) return undefined;
+    const canvas = ref.current;
+    const ctx = canvas.getContext("2d");
+    const frame = ctx.createImageData(canvas.width, canvas.height);
+
+    const paint = () => {
+      const data = frame.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const v = Math.random();
+        const level =
+          v < 0.22 ? 0 : v < 0.45 ? 40 : v < 0.68 ? 95 : v < 0.86 ? 150 : v < 0.96 ? 205 : 255;
+        data[i] = level * 0.75;
+        data[i + 1] = level;
+        data[i + 2] = level * 0.95;
+        data[i + 3] = 255;
+      }
+      ctx.putImageData(frame, 0, 0);
+    };
+
+    paint();
+    const interval = setInterval(paint, 55);
+    return () => clearInterval(interval);
+  }, [active]);
+
+  return (
+    <canvas
+      ref={ref}
+      width={64}
+      height={86}
+      className={`ab-static${active ? " on" : ""}`}
+      aria-hidden="true"
+    />
+  );
+}
+
+function Showreel() {
+  const reduced = useReduced();
+  const videoRef = useRef(null);
+  const [index, setIndex] = useState(0);
+  const [staticOn, setStaticOn] = useState(false);
+  const [playing, setPlaying] = useState(!reduced);
+
+  // hold each clip, then open the static window
+  useEffect(() => {
+    if (!playing) return undefined;
+    const startStatic = setTimeout(() => setStaticOn(true), CLIP_MS);
+    const swap = setTimeout(() => setIndex((i) => (i + 1) % REEL.length), CLIP_MS + CUT_MS);
+    return () => {
+      clearTimeout(startStatic);
+      clearTimeout(swap);
+    };
+  }, [index, playing]);
+
+  // the static closes on its own, a beat after the new source is mounted
+  useEffect(() => {
+    if (!staticOn) return undefined;
+    const stop = setTimeout(() => setStaticOn(false), STATIC_MS);
+    return () => clearTimeout(stop);
+  }, [staticOn]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (playing) video.play().catch(() => {});
+    else video.pause();
+  }, [playing, index]);
+
+  const skip = () => setIndex((i) => (i + 1) % REEL.length);
+
+  return (
+    <div className="ab-reel">
+      <video
+        key={REEL[index]}
+        ref={videoRef}
+        className="ab-reel-vid"
+        src={REEL[index]}
+        muted
+        playsInline
+        preload="auto"
+        onError={skip}
+        aria-label={`Showreel clip ${index + 1} of ${REEL.length}`}
+      />
+      {/* warms the next clip so the cut lands on a decoded frame */}
+      <video
+        className="ab-preload"
+        src={REEL[(index + 1) % REEL.length]}
+        preload="auto"
+        muted
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+
+      <StaticNoise active={staticOn} />
+
+      <div className="ab-reel-bar">
+        <span>SHOWREEL / EDIT</span>
+        <small>
+          {pad(index + 1)} / {pad(REEL.length)}
+        </small>
+      </div>
+
+      {!playing && (
+        <button
+          type="button"
+          className="ab-reel-play"
+          onClick={() => {
+            sfx.start();
+            setPlaying(true);
+          }}
+        >
+          ▶ PLAY REEL
+        </button>
+      )}
+    </div>
+  );
+}
+
+export default function About() {
+  return (
+    <div className="ph ab">
+      <PixelSky variant="data" />
+      <PixelNav />
+
+      <main className="ab-wrap">
+        <header className="ab-head">
+          <div className="ph-lbl">★ CHARACTER SHEET · ABOUT ME</div>
+          <h1 className="ab-title">
+            MORE THAN JUST <span>CODE.</span>
+          </h1>
+        </header>
+
+        <div className="ab-grid">
+          <div className="ab-row ab-row1">
+            <section className="ab-panel ab-journey">
+              <div className="ab-kicker">QUEST LOG</div>
+              <h2 className="ab-h">MY JOURNEY</h2>
+
+              <Timeline />
+
+              <p>
+                I began my software development journey in Grade 10, but it was in Grade 12 that I truly
+                discovered my passion for building software. Although I have two years of formal experience,
+                I’ve been exposed to coding much earlier and started developing websites during my first year
+                in school. Over the past year, I’ve focused on deepening my skills and building real-world
+                projects.
+              </p>
+              <p>
+                I enjoy building ideas as soon as they come to mind and turning them into real, working
+                projects. While my tech stack may not be extensive, it’s one I’m confident using and
+                continually improving.
+              </p>
+              <p className="ab-quote">
+                these 4 full-stack projects displayed were created by me, this does not include the websites I
+                created along with my school group members.
+              </p>
+            </section>
+
+            <section className="ab-panel ab-stats" aria-label="Stats">
+              {STATS.map((stat, i) => (
+                <Stat key={stat.label} value={stat.value} label={stat.label} delay={500 + i * 220} />
+              ))}
+            </section>
+          </div>
+
+          <div className="ab-row ab-row2">
+            <section className="ab-panel ab-tech-panel">
+              <div className="ab-kicker">INVENTORY</div>
+              <h2 className="ab-h">THE TECH</h2>
+
+              <div className="ab-tech">
+                {TECH.map(([abbr, name, color]) => (
+                  <div key={name} className="ab-tile" style={{ "--c": color }}>
+                    <b>{abbr}</b>
+                    <small>{name}</small>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="ab-panel ab-creative">
+              <div className="ab-kicker">SIDE QUEST</div>
+              <h2 className="ab-h">THE CREATIVE SIDE</h2>
+
+              <div className="ab-creative-body">
+                <div>
+                  <p>
+                    Aside from coding, I also have a hobby of editing, as I work part time on Suno for their
+                    promotion videos where I make short reel videos using their music.
+                  </p>
+                  <div className="ab-tags">
+                    <span>● VIDEO EDITING</span>
+                    <span>● ANIMATING</span>
+                  </div>
+                </div>
+
+                <Showreel />
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
