@@ -56,6 +56,13 @@ export default function LoadingScreen() {
     };
   }, [overlay.visible]);
 
+  // Let scroll-reveal sections know the page is actually visible now,
+  // otherwise they animate behind the overlay where nobody sees them.
+  useEffect(() => {
+    if (overlay.visible) return;
+    window.dispatchEvent(new Event("boot:done"));
+  }, [overlay.visible]);
+
   const skip = useCallback(() => {
     clearTimeout(timer.current);
     setOverlay((current) => ({ ...current, visible: false }));

@@ -66,7 +66,7 @@ function Contact() {
     sfx.start();
     setSending(true);
 
-    emailjs.sendForm("service_17dz64i", "template_iq7uu1j", form.current, "uriJ2YF-eL2YRHeVa").then(
+    emailjs.sendForm("service_9c0qg7q", "template_iq7uu1j", form.current, "uriJ2YF-eL2YRHeVa").then(
       () => {
         sfx.coin();
         setStatus("success");
@@ -223,7 +223,14 @@ function Contact() {
                     ✖
                   </span>
                   <h3>TRANSMISSION FAILED</h3>
-                  <p>Something went wrong sending your message. Your text is still here — try again.</p>
+                  <p>
+                    Something went wrong sending your message. Your text is still here — try again, or
+                    email me directly at{" "}
+                    <a href={`mailto:${EMAIL}`} className="ct-fallback">
+                      {EMAIL}
+                    </a>
+                    .
+                  </p>
                   <button type="button" className="ph-btn ph-btn-s" onClick={retry}>
                     TRY AGAIN
                   </button>

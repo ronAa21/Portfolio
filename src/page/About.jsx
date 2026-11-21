@@ -28,20 +28,80 @@ const STEPS = [
 
 const STATS = [
   { value: 2, label: "YEARS EXPERIENCE" },
-  { value: 5, label: "FULL-STACK PROJECTS BUILT" },
+  { value: 7, label: "FULL-STACK PROJECTS BUILT" },
   { value: 2, label: "STATIC PROJECTS BUILT" },
 ];
 
-// [abbr, name, color]
+// newest first
+const EXPERIENCE = [
+  {
+    when: "SEP – OCT 2026",
+    role: "FULL-STACK DEVELOPER",
+    org: "Cloudwalk Inc. · Intern",
+    note: "Deployed site builds through Git and picked up new technologies on the job.",
+  },
+  {
+    when: "JUN – AUG 2026",
+    role: "RECEPTIONIST",
+    org: "Prince Jun Devt. Corp · Project-based",
+    note: "Assisted clients at the front desk and coordinated with the team under pressure.",
+  },
+  {
+    when: "OCT 2025 – JUN 2026",
+    role: "VIDEO EDITOR",
+    org: "Suno · Intern",
+    note: "Cut transitional content in CapCut and used AI to generate music and story.",
+  },
+  {
+    when: "MAR 2026",
+    role: "ANIMATOR",
+    org: "Freelance · Stick-figure animation",
+    note: "Illustrated and animated stick-figure scenes that walk through historical events.",
+  },
+  {
+    when: "MAR – NOV 2023",
+    role: "CHAT SUPPORT",
+    org: "Synagie · Intern",
+    note: "Handled multiple customer inquiries across a rotating night and graveyard shift.",
+  },
+];
+
+// [abbr, name, color], grouped so the inventory stays readable as the stack grows
 const TECH = [
-  ["RE", "React", "#5eead4"],
-  ["NJ", "Node.js", "#5eead4"],
-  ["EX", "Express", "#ffffff"],
-  ["SQ", "MySQL", "#fde68a"],
-  ["HT", "HTML", "#e8793a"],
-  ["JS", "JavaScript", "#fde68a"],
-  ["CS", "CSS", "#93c5fd"],
-  ["RN", "Render", "#c4b5fd"],
+  {
+    label: "DEVELOPMENT",
+    items: [
+      ["RE", "React", "#5eead4"],
+      ["NJ", "Node.js", "#5eead4"],
+      ["EX", "Express", "#ffffff"],
+      ["JS", "JavaScript", "#fde68a"],
+      ["HT", "HTML", "#e8793a"],
+      ["CS", "CSS", "#93c5fd"],
+      ["SQ", "MySQL", "#fde68a"],
+      ["PG", "PostgreSQL", "#93c5fd"],
+      ["PY", "Python", "#fde68a"],
+      ["GT", "Git", "#fda4af"],
+      ["DK", "Docker", "#93c5fd"],
+      ["RN", "Render", "#c4b5fd"],
+    ],
+  },
+  {
+    label: "CREATIVE",
+    items: [
+      ["CC", "CapCut", "#fda4af"],
+      ["CV", "Canva", "#5eead4"],
+      ["IB", "ibisPaint", "#c4b5fd"],
+    ],
+  },
+  {
+    label: "AI TOOLS",
+    items: [
+      ["GM", "Gemini", "#93c5fd"],
+      ["CL", "Claude", "#e8793a"],
+      ["SN", "Suno", "#fde68a"],
+      ["KR", "Kiro", "#c4b5fd"],
+    ],
+  },
 ];
 
 function useReduced() {
@@ -49,20 +109,79 @@ function useReduced() {
   return reduced;
 }
 
-function Timeline() {
-  const reduced = useReduced();
-  const [lit, setLit] = useState(reduced ? STEPS.length - 1 : -1);
+// true once the element has scrolled into view, then stays true
+function useReveal() {
+  const ref = useRef(null);
+  const [seen, setSeen] = useState(false);
 
   useEffect(() => {
-    if (reduced) return undefined;
-    const timers = STEPS.map((_, i) => setTimeout(() => setLit(i), 350 + i * 420));
+    const el = ref.current;
+    if (!el) return undefined;
+
+    let io = null;
+    let timer = 0;
+
+    const start = () => {
+      if (io) return;
+      if (!("IntersectionObserver" in window)) {
+        setSeen(true);
+        return;
+      }
+      io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setSeen(true);
+            io.disconnect();
+          }
+        },
+        { threshold: 0.4 }
+      );
+      io.observe(el);
+    };
+
+    // hold until the boot overlay lifts, or the reveal plays behind it
+    window.addEventListener("boot:done", start);
+    timer = setTimeout(start, 2600);
+
+    return () => {
+      window.removeEventListener("boot:done", start);
+      clearTimeout(timer);
+      if (io) io.disconnect();
+    };
+  }, []);
+
+  return [ref, seen];
+}
+
+// A panel that steps into view the first time it is scrolled to.
+// `children` may be a function, which receives `seen`.
+function Card({ className = "", label, children }) {
+  const [ref, seen] = useReveal();
+  return (
+    <section ref={ref} aria-label={label} className={`ab-panel ${className} ab-rv${seen ? " in" : ""}`}>
+      {typeof children === "function" ? children(seen) : children}
+    </section>
+  );
+}
+
+function Timeline({ seen }) {
+  const reduced = useReduced();
+  const [lit, setLit] = useState(-1);
+
+  useEffect(() => {
+    if (!seen || reduced) return undefined;
+    const timers = STEPS.map((_, i) => setTimeout(() => setLit(i), 180 + i * 380));
     return () => timers.forEach(clearTimeout);
-  }, [reduced]);
+  }, [seen, reduced]);
 
   return (
     <ol className="ab-tl">
       {STEPS.map((step, i) => (
-        <li key={step.label} className={i <= lit ? "on" : ""} style={{ "--c": step.color }}>
+        <li
+          key={step.label}
+          className={i <= (reduced && seen ? STEPS.length - 1 : lit) ? "on" : ""}
+          style={{ "--c": step.color }}
+        >
           <span className="ab-node" aria-hidden="true" />
           <b>{step.label}</b>
           <small>{step.note}</small>
@@ -72,14 +191,14 @@ function Timeline() {
   );
 }
 
-function Stat({ value, label, delay }) {
+function Stat({ value, label, delay, seen }) {
   const reduced = useReduced();
   const filled = Math.min(12, value * 2);
   const [seg, setSeg] = useState(reduced ? filled : 0);
   const [count, setCount] = useState(reduced ? value : 0);
 
   useEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || !seen) return undefined;
     const timers = [];
     const segDur = 62;
 
@@ -99,7 +218,7 @@ function Stat({ value, label, delay }) {
     }
 
     return () => timers.forEach(clearTimeout);
-  }, [value, delay, reduced, filled]);
+  }, [seen, value, delay, reduced, filled]);
 
   return (
     <div className="ab-stat">
@@ -252,53 +371,76 @@ export default function About() {
 
         <div className="ab-grid">
           <div className="ab-row ab-row1">
-            <section className="ab-panel ab-journey">
-              <div className="ab-kicker">QUEST LOG</div>
-              <h2 className="ab-h">MY JOURNEY</h2>
+            <Card className="ab-journey">
+              {(seen) => (
+                <>
+                  <div className="ab-kicker">QUEST LOG</div>
+                  <h2 className="ab-h">MY JOURNEY</h2>
 
-              <Timeline />
+                  <Timeline seen={seen} />
 
-              <p>
-                I began my software development journey in Grade 10, but it was in Grade 12 that I truly
-                discovered my passion for building software. Although I have two years of formal experience,
-                I’ve been exposed to coding much earlier and started developing websites during my first year
-                in school. Over the past year, I’ve focused on deepening my skills and building real-world
-                projects.
-              </p>
-              <p>
-                I enjoy building ideas as soon as they come to mind and turning them into real, working
-                projects. While my tech stack may not be extensive, it’s one I’m confident using and
-                continually improving.
-              </p>
-              <p className="ab-quote">
-                these 4 full-stack projects displayed were created by me, this does not include the websites I
-                created along with my school group members.
-              </p>
-            </section>
+                  <p>
+                    I began my software development journey in Grade 10, but it was in Grade 12 that I truly
+                    discovered my passion for building software. Although I have two years of formal
+                    experience, I’ve been exposed to coding much earlier and started developing websites
+                    during my first year in school. Over the past year, I’ve focused on deepening my skills and
+                    building real-world projects.
+                  </p>
+                  <p>
+                    I enjoy building ideas as soon as they come to mind and turning them into real, working
+                    projects. While my tech stack may not be extensive, it’s one I’m confident using and
+                    continually improving.
+                  </p>
+                  <p className="ab-quote">
+                    these 7 full-stack projects displayed were created by me, this does not include the
+                    websites I created along with my school group members.
+                  </p>
+                </>
+              )}
+            </Card>
 
-            <section className="ab-panel ab-stats" aria-label="Stats">
-              {STATS.map((stat, i) => (
-                <Stat key={stat.label} value={stat.value} label={stat.label} delay={500 + i * 220} />
-              ))}
-            </section>
+            <Card className="ab-stats" label="Stats">
+              {(seen) =>
+                STATS.map((stat, i) => (
+                  <Stat
+                    key={stat.label}
+                    value={stat.value}
+                    label={stat.label}
+                    delay={i * 200}
+                    seen={seen}
+                  />
+                ))
+              }
+            </Card>
           </div>
 
           <div className="ab-row ab-row2">
-            <section className="ab-panel ab-tech-panel">
+            <Card className="ab-tech-panel">
               <div className="ab-kicker">INVENTORY</div>
               <h2 className="ab-h">THE TECH</h2>
 
               <div className="ab-tech">
-                {TECH.map(([abbr, name, color]) => (
-                  <div key={name} className="ab-tile" style={{ "--c": color }}>
-                    <b>{abbr}</b>
-                    <small>{name}</small>
-                  </div>
-                ))}
+                {TECH.map((group, gi) => {
+                  // running tile position, so the stagger runs across the groups
+                  const base = TECH.slice(0, gi).reduce((n, g) => n + g.items.length, 0);
+                  return (
+                    <div key={group.label} className="ab-tech-group">
+                      <div className="ab-tech-lbl">{group.label}</div>
+                      <div className="ab-tech-grid">
+                        {group.items.map(([abbr, name, color], i) => (
+                          <div key={name} className="ab-tile" style={{ "--c": color, "--i": base + i }}>
+                            <b>{abbr}</b>
+                            <small>{name}</small>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </section>
+            </Card>
 
-            <section className="ab-panel ab-creative">
+            <Card className="ab-creative">
               <div className="ab-kicker">SIDE QUEST</div>
               <h2 className="ab-h">THE CREATIVE SIDE</h2>
 
@@ -316,8 +458,26 @@ export default function About() {
 
                 <Showreel />
               </div>
-            </section>
+            </Card>
           </div>
+
+          <Card className="ab-exp">
+            <div className="ab-kicker">BATTLE LOG</div>
+            <h2 className="ab-h">THE EXPERIENCE</h2>
+
+            <ol className="ab-exp-list">
+              {EXPERIENCE.map((job, i) => (
+                <li key={job.role} className="ab-exp-item" style={{ "--i": i }}>
+                  <span className="ab-exp-when">{job.when}</span>
+                  <div className="ab-exp-who">
+                    <b>{job.role}</b>
+                    <small>{job.org}</small>
+                  </div>
+                  <p>{job.note}</p>
+                </li>
+              ))}
+            </ol>
+          </Card>
         </div>
       </main>
     </div>

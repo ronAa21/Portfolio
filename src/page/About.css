@@ -32,7 +32,7 @@
   grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr);
 }
 .ab-row2 {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.43fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
 }
 .ab-panel {
   border: 2px solid var(--t);
@@ -105,6 +105,10 @@
   background: var(--c);
   box-shadow: inset 0 0 0 6px #04191c;
 }
+/* the current stop (last year) blinks like a "you are here" marker */
+.ab-tl li.on:last-child .ab-node {
+  animation: ab-blink 1.1s steps(1, end) infinite;
+}
 .ab-tl b {
   font-size: 8px;
   font-weight: 400;
@@ -166,8 +170,23 @@
 
 /* ---------- tech ---------- */
 .ab-tech {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ab-tech-group + .ab-tech-group {
+  border-top: 1px solid #0e4a44;
+  padding-top: 13px;
+}
+.ab-tech-lbl {
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  color: #7fb8b1;
+  margin-bottom: 8px;
+}
+.ab-tech-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 .ab-tile {
@@ -179,9 +198,16 @@
   border: 2px solid var(--c);
   background: #07211f;
 }
-/* hovering a tech tile makes its border blink red */
+/* hovering a tech tile lifts it, lights the slot, and blinks the border red */
 .ab-tile:hover {
+  position: relative;
+  z-index: 1;
+  translate: 0 -3px;
+  background: #0e332f;
   animation: ab-red 0.7s steps(1, end) infinite;
+}
+.ab-tile:hover small {
+  color: #ffffff;
 }
 .ab-tile b {
   font-size: 15px;
@@ -199,9 +225,14 @@
 }
 
 /* ---------- creative side ---------- */
+.ab-creative {
+  display: flex;
+  flex-direction: column;
+}
 .ab-creative-body {
+  flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 210px;
+  grid-template-columns: minmax(0, 1fr) 258px;
   gap: 20px;
   align-items: start;
 }
@@ -226,7 +257,7 @@
 }
 .ab-reel {
   position: relative;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 9 / 16;
   overflow: hidden;
   border: 2px solid #5a2f2f;
   background: #021512;
@@ -306,6 +337,82 @@
   cursor: pointer;
 }
 
+/* ---------- experience ---------- */
+.ab-exp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ab-exp-item {
+  display: grid;
+  grid-template-columns: 158px minmax(0, 262px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 13px 0;
+  border-top: 1px solid #0e4a44;
+}
+.ab-exp-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.ab-exp-when {
+  font-size: 6.5px;
+  letter-spacing: 1px;
+  line-height: 2;
+  color: var(--y);
+}
+.ab-exp-who b {
+  display: block;
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  line-height: 1.9;
+  color: var(--t2);
+}
+.ab-exp-who small {
+  display: block;
+  font-size: 6.5px;
+  line-height: 1.9;
+  color: #7fb8b1;
+}
+.ab-exp-item p {
+  font-size: 7.5px;
+  line-height: 2;
+  color: #e8f6f3;
+}
+
+/* ---------- scroll reveal ---------- */
+.ab-rv {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.4s linear,
+    transform 0.4s steps(5, end);
+}
+.ab-rv.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* tiles and log rows step in one after another */
+.ab-tile,
+.ab-exp-item {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.3s linear,
+    transform 0.3s steps(4, end);
+  transition-delay: calc(var(--i, 0) * 38ms);
+}
+.ab-exp-item {
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.ab-rv.in .ab-tile,
+.ab-rv.in .ab-exp-item {
+  opacity: 1;
+  transform: none;
+}
+
 /* ---------- responsive ---------- */
 @media (max-width: 980px) {
   .ab-row1,
@@ -341,6 +448,13 @@
     inset: -12px -6vw -14px;
     background: linear-gradient(180deg, #02080cf5 0%, #02080ce0 58%, #02080c00 100%);
     pointer-events: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .ab-exp-item {
+    grid-template-columns: 1fr;
+    gap: 7px;
   }
 }
 
@@ -390,6 +504,9 @@
   .ab-reel {
     width: min(240px, 100%);
   }
+  .ab-tech-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* ---------- hover blink ---------- */
@@ -399,9 +516,30 @@
   }
 }
 
+/* current-stop marker: solid, then hollow */
+@keyframes ab-blink {
+  50% {
+    border-color: #6b2b36;
+    background: #04191c;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ab-tile:hover,
   .ab-reel:hover {
     border-color: #f87171 !important;
+  }
+  .ab-tile:hover {
+    translate: none;
+  }
+  .ab-tl li.on:last-child .ab-node {
+    animation: none;
+  }
+  .ab-rv,
+  .ab-tile,
+  .ab-exp-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
